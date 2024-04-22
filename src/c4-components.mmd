@@ -1,0 +1,64 @@
+C4Dynamic
+    title Компонентная диаграмма для интернет магазина с рекомендательной системой
+
+    Person(c4, "Пользователи", "Покупают товары в интернете.")
+    Person(c5, "Подрядчики", "Продают товары в интернете.")
+    System_Boundary(b, "Интернет-Магазин") {
+      Boundary(b1, "Фронтенд") {
+        Component(c1, "Фронтенд сайта и мобильного приложения", "", "Позволяет пользователю искать и покупать товары.")
+      }
+      Boundary(b2, "Бэкэнд") {
+        Component(c2, "Бэкэнд", "", "Обслуживает логику покупок и размещение товаров.")
+    
+        Boundary(b3, "Hadoop кластер") {
+          ContainerDb(c31, "HDFS", "", "Хранит информацию о товарах и пользователях.")
+          Container(c32, "YARN", "", "Управляет ресурсами кластера и планирует задачи.")
+          Container(c33, "Spark Streaming", "", "Пакетная обработка больших объёмов данных.")
+        }
+        Component(c6, "Приложение Kafka Streams", "", "Обработка потоковых данных в реальном времени.")
+        Component(c7, "Сервис Аналитики", "", "Аналитика результатов полученных в реальном времени.")
+        Component(c8, "Сервис Рекомендаций", "", "Рекомендации основанные на поведении пользователя.")
+      }
+    }
+    Rel(c5, c4, "Доставляет товары.")
+    Rel(c4, c1, "Использует фронтенд для выбора и покупки.")
+    Rel(c5, c1, "Использует фронтенд для размещения товаров.")
+    
+    Rel(c1, c2, "Запрашивает данные у бэкенда.")
+    Rel(c2, c1, "Отдаёт данные фронтенду.")
+
+    Rel(c2, c31, "Забирает данные из базы данных.")
+    Rel(c31, c2, "Забирает данные у приложения.")
+    
+    Rel(c32, c31, "Управляет процессами.")
+    Rel(c32, c33, "Управляет процессами.")
+    Rel(c31, c33, "Забирает данные для потоковыой обработки.")
+    
+    Rel(c33, c8, "Обучение на исторических данных.")
+    Rel(c6, c8, "Рекомендации на данных.")
+    Rel(c8, c2, "Поставка рекомендаций пользователям.")
+    
+    Rel(c2, c6, "Получение данных в реальном времени.")
+    Rel(c6, c7, "Аналитика в реальном времени для слежения за процессами.")
+    
+    
+    UpdateRelStyle(c5, c4, $textColor="red", $offsetY="50", $offsetX="-50")    
+    UpdateRelStyle(c4, c1, $textColor="red", $offsetY="-160", $offsetX="-200")
+    UpdateRelStyle(c5, c1, $textColor="red", $offsetY="-130", $offsetX="-40")
+
+    UpdateRelStyle(c1, c2, $textColor="red", $offsetX="-50", $offsetY="-30")
+    UpdateRelStyle(c2, c1, $textColor="red", $offsetX="-50", $offsetY="30")
+    
+    UpdateRelStyle(c2, c31, $textColor="red", $offsetX="10", $offsetY="00")
+    UpdateRelStyle(c31, c2, $textColor="red", $offsetY="70", $offsetX="-220")
+
+    UpdateRelStyle(c32, c31, $textColor="red", $offsetX="-50", $offsetY="30")
+    UpdateRelStyle(c32, c33, $textColor="red", $offsetX="10", $offsetY="00")
+    UpdateRelStyle(c31, c33, $textColor="red", $offsetY="70", $offsetX="-220")
+
+    UpdateRelStyle(c33, c8, $textColor="red", $offsetX="-50", $offsetY="30")
+    UpdateRelStyle(c6, c8, $textColor="red", $offsetX="10", $offsetY="00")
+    UpdateRelStyle(c8, с2, $textColor="red", $offsetY="70", $offsetX="-220")
+
+    UpdateRelStyle(c2, c6, $textColor="red", $offsetX="10", $offsetY="00")
+    UpdateRelStyle(c6, c7, $textColor="red", $offsetY="70", $offsetX="-220")
